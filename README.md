@@ -31,6 +31,7 @@ The outerCell holds an innerTableView. The innerTableView's delegate and dataSou
 
 
 The outer moveRowAt delegate method should look like:
+
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         tableView.beginUpdates()
         //alter your data structure
@@ -39,6 +40,7 @@ The outer moveRowAt delegate method should look like:
     }
 
 The commit editingStyle and insertion require a helper method:
+
     func setOuterIndexPaths() {
         for cell in tableView.visibleCells as! [TableViewCellWithTableView] {
             cell.outerIndexPath = tableView.indexPath(for: cell)
@@ -46,6 +48,7 @@ The commit editingStyle and insertion require a helper method:
     }
 
 The outer commit editingStyle delegate method should look like:
+
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         tableView.beginUpdates()
         //alter your data structure
@@ -55,6 +58,7 @@ The outer commit editingStyle delegate method should look like:
     }
 
 For insertion, if you have a UIBarButtonItem with an action bound to #selector(newItem):
+
     func newItem() {
         tableView.beginUpdates()
         tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
