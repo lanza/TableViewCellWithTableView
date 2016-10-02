@@ -10,7 +10,7 @@
 		B32DAB031DA0D2F200B7ED58 /* TableViewCellWithTableView.h in Headers */ = {isa = PBXBuildFile; fileRef = B32DAB011DA0D2F200B7ED58 /* TableViewCellWithTableView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B32DAB0C1DA0D32000B7ED58 /* InnerTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32DAB091DA0D32000B7ED58 /* InnerTableView.swift */; };
 		B32DAB0E1DA0D32000B7ED58 /* TableViewCellWithTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32DAB0B1DA0D32000B7ED58 /* TableViewCellWithTableView.swift */; };
-		B399B2B21DA19C0700CDBCCF /* README in Resources */ = {isa = PBXBuildFile; fileRef = B399B2B11DA19C0700CDBCCF /* README */; };
+		B399B2B41DA1B4B400CDBCCF /* README in Resources */ = {isa = PBXBuildFile; fileRef = B399B2B31DA1B4B400CDBCCF /* README */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,7 +19,7 @@
 		B32DAB021DA0D2F200B7ED58 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B32DAB091DA0D32000B7ED58 /* InnerTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InnerTableView.swift; sourceTree = "<group>"; };
 		B32DAB0B1DA0D32000B7ED58 /* TableViewCellWithTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellWithTableView.swift; sourceTree = "<group>"; };
-		B399B2B11DA19C0700CDBCCF /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = TableViewCellWithTableView/README; sourceTree = "<group>"; };
+		B399B2B31DA1B4B400CDBCCF /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,7 +36,7 @@
 		B32DAAF41DA0D2F200B7ED58 = {
 			isa = PBXGroup;
 			children = (
-				B399B2B11DA19C0700CDBCCF /* README */,
+				B399B2B31DA1B4B400CDBCCF /* README */,
 				B32DAB001DA0D2F200B7ED58 /* TableViewCellWithTableView */,
 				B32DAAFF1DA0D2F200B7ED58 /* Products */,
 			);
@@ -140,7 +140,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B399B2B21DA19C0700CDBCCF /* README in Resources */,
+				B399B2B41DA1B4B400CDBCCF /* README in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
