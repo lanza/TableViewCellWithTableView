@@ -1,0 +1,48 @@
+Notes:
+- Deleting an innerCell is not resizing outerCell
+- Intercept dequeue proces so as not to have to set outerIndexPath on TVCWTV.
+
+
+
+
+Consider:
+- Implement delegate method to get {Table,Section}{Header,Footer}View if not implemented in cellForRowAt indexPath
+- Also consider making them unsettable in cellForRowAt indexPath to be more consistent with implementation methods.
+
+
+
+- Requirements for usage:
+    - in viewDidLoad(_:)
+        - tableView.rowHeight = UITableViewAutomaticDimension
+        - tableView.estimatedRowHeight = 2 //or higher
+    - cellForRowAt indexPath
+        - cell.outerIndexPath = indexPath
+        - cell.dataSource = self
+        - optional: set Table{Header,Footer}View
+
+    - needs to be fixed/hacky things I don't like':
+        - moveRowAt:
+            - tableView.reloadData()
+        - commit editingStyle:
+            - setOuterIndexPaths()
+        - inserting new row:
+            - beginUpdates()
+            - insertRows, append to data
+            - setOuterIndexPaths
+            - endUpdates()
+
+    - required functions in ViewController:
+        func setOuterIndexPaths() {
+            for cell in tableView.visibleCells as! [TableViewCellWithTableView] {
+                cell.outerIndexPath = tableView.indexPath(for: cell)
+            }
+        }
+    - TVCWTVDataSource methods
+        - heightForInnerCell
+        - reuseIdentifierForInnerTableView
+        - cellClassForInnerTableView
+        - numberOfRowsInSection
+        - cellForRowAt
+
+Bugs:
+crashes sometime when doing combinations of move/insert/deletes
