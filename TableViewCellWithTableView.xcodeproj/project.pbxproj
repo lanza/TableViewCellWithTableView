@@ -10,16 +10,14 @@
 		B32DAB031DA0D2F200B7ED58 /* TableViewCellWithTableView.h in Headers */ = {isa = PBXBuildFile; fileRef = B32DAB011DA0D2F200B7ED58 /* TableViewCellWithTableView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B32DAB0C1DA0D32000B7ED58 /* InnerTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32DAB091DA0D32000B7ED58 /* InnerTableView.swift */; };
 		B32DAB0E1DA0D32000B7ED58 /* TableViewCellWithTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32DAB0B1DA0D32000B7ED58 /* TableViewCellWithTableView.swift */; };
-		B399B2B41DA1B4B400CDBCCF /* README in Resources */ = {isa = PBXBuildFile; fileRef = B399B2B31DA1B4B400CDBCCF /* README */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B32DAAFE1DA0D2F200B7ED58 /* TableViewCellWithTableView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TableViewCellWithTableView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B32DAB011DA0D2F200B7ED58 /* TableViewCellWithTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCellWithTableView.h; sourceTree = "<group>"; };
-		B32DAB021DA0D2F200B7ED58 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B32DAB091DA0D32000B7ED58 /* InnerTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InnerTableView.swift; sourceTree = "<group>"; };
-		B32DAB0B1DA0D32000B7ED58 /* TableViewCellWithTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellWithTableView.swift; sourceTree = "<group>"; };
-		B399B2B31DA1B4B400CDBCCF /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		B32DAB011DA0D2F200B7ED58 /* TableViewCellWithTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TableViewCellWithTableView.h; path = TableViewCellWithTableView/TableViewCellWithTableView.h; sourceTree = "<group>"; };
+		B32DAB021DA0D2F200B7ED58 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = TableViewCellWithTableView/Info.plist; sourceTree = "<group>"; };
+		B32DAB091DA0D32000B7ED58 /* InnerTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InnerTableView.swift; path = TableViewCellWithTableView/InnerTableView.swift; sourceTree = "<group>"; };
+		B32DAB0B1DA0D32000B7ED58 /* TableViewCellWithTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TableViewCellWithTableView.swift; path = TableViewCellWithTableView/TableViewCellWithTableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,9 +34,11 @@
 		B32DAAF41DA0D2F200B7ED58 = {
 			isa = PBXGroup;
 			children = (
-				B399B2B31DA1B4B400CDBCCF /* README */,
-				B32DAB001DA0D2F200B7ED58 /* TableViewCellWithTableView */,
+				B32DAB091DA0D32000B7ED58 /* InnerTableView.swift */,
+				B32DAB0B1DA0D32000B7ED58 /* TableViewCellWithTableView.swift */,
 				B32DAAFF1DA0D2F200B7ED58 /* Products */,
+				B32DAB011DA0D2F200B7ED58 /* TableViewCellWithTableView.h */,
+				B32DAB021DA0D2F200B7ED58 /* Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -48,25 +48,6 @@
 				B32DAAFE1DA0D2F200B7ED58 /* TableViewCellWithTableView.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		B32DAB001DA0D2F200B7ED58 /* TableViewCellWithTableView */ = {
-			isa = PBXGroup;
-			children = (
-				B32DAB091DA0D32000B7ED58 /* InnerTableView.swift */,
-				B32DAB0B1DA0D32000B7ED58 /* TableViewCellWithTableView.swift */,
-				B32DAB0F1DA0D32900B7ED58 /* Other */,
-			);
-			path = TableViewCellWithTableView;
-			sourceTree = "<group>";
-		};
-		B32DAB0F1DA0D32900B7ED58 /* Other */ = {
-			isa = PBXGroup;
-			children = (
-				B32DAB011DA0D2F200B7ED58 /* TableViewCellWithTableView.h */,
-				B32DAB021DA0D2F200B7ED58 /* Info.plist */,
-			);
-			name = Other;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -107,7 +88,7 @@
 		B32DAAF51DA0D2F200B7ED58 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Nathan Lanza";
 				TargetAttributes = {
 					B32DAAFD1DA0D2F200B7ED58 = {
@@ -140,7 +121,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B399B2B41DA1B4B400CDBCCF /* README in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,6 +157,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -230,6 +211,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

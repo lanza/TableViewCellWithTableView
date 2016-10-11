@@ -1,9 +1,11 @@
 import UIKit
 
 //MARK: TableViewCelLWithTableView
-public class TableViewCellWithTableView: UITableViewCell {
+open class TableViewCellWithTableView: UITableViewCell {
     public var delegate: TableViewCellWithTableViewDelegate? {
-        didSet{ subTableViewDelegateAndDataSource.delegate = delegate }
+        didSet{
+            subTableViewDelegateAndDataSource.delegate = delegate
+        }
     }
     public var dataSource: TableViewCellWithTableViewDataSource! {
         didSet {
@@ -11,9 +13,9 @@ public class TableViewCellWithTableView: UITableViewCell {
             setConstraints()
         }
     }
-
+    
     let innerTableView = InnerTableView()
-
+    
     public var outerIndexPath: IndexPath!
     let subTableViewDelegateAndDataSource = SubTableViewDelegateAndDataSource()
     
@@ -25,10 +27,6 @@ public class TableViewCellWithTableView: UITableViewCell {
         innerTableView.dataSource = subTableViewDelegateAndDataSource
     }
     
-    public override func prepareForReuse() {
-        print("prepare for reuse")
-    }
-    
     var heightConstraint: NSLayoutConstraint!
     
     func setConstraints() {
@@ -38,28 +36,31 @@ public class TableViewCellWithTableView: UITableViewCell {
         
         var constraints = [NSLayoutConstraint]()
         
-        constraints.append(innerTableView.topAnchor.constraint(equalTo: contentView.topAnchor))
-        constraints.append(innerTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor))
-        constraints.append(innerTableView.leftAnchor.constraint(equalTo: contentView.leftAnchor))
-        constraints.append(innerTableView.rightAnchor.constraint(equalTo: contentView.rightAnchor))
+        constraints.append(innerTableView.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor))
+        constraints.append(innerTableView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor))
+        constraints.append(innerTableView.leftAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leftAnchor))
+        constraints.append(innerTableView.rightAnchor.constraint(equalTo: contentView.layoutMarginsGuide.rightAnchor))
         
         heightConstraint = innerTableView.heightAnchor.constraint(equalToConstant: 1)
-        constraints.append(heightConstraint)
         
+        constraints.append(heightConstraint)
+        setHeightConstraint()
         NSLayoutConstraint.activate(constraints)
     }
     
     func setHeightConstraint() {
-        innerTableView.beginUpdates()
+        guard let dataSource = dataSource else { return }
+        
         let headerHeight = innerTableView.tableHeaderView?.frame.height ?? 0
         let footerHeight = innerTableView.tableFooterView?.frame.height ?? 0
         let cellHeight = dataSource.heightForInnerCell(for: self)
         var cellCount = 0
-        for i in 0..<(dataSource!.numberOfSections?(in: self) ?? 1) {
-            cellCount += dataSource!.cell(self, numberOfRowsInSection: i)
+        for i in 0..<(dataSource.numberOfSections?(in: self) ?? 1) {
+            cellCount += dataSource.cell(self, numberOfRowsInSection: i)
         }
         let totalHeightForCells = CGFloat(cellCount) * cellHeight + headerHeight + footerHeight
         
+        //        innerTableView.beginUpdates()
         heightConstraint.constant = totalHeightForCells
         innerTableView.endUpdates()
     }
@@ -104,6 +105,19 @@ extension TableViewCellWithTableView {
     public func dequeueReusableCell(withIdentifier identifier: String, for indexPath: IndexPath) -> UITableViewCell {
         return innerTableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
     }
+    public func deselectRow(at indexPath: IndexPath, animated: Bool) {
+        innerTableView.deselectRow(at: indexPath, animated: animated)
+    }
+    public func innerIndexPath(forInner innerCell: UITableViewCell) -> IndexPath? {
+        return innerTableView.indexPath(for: innerCell)
+    }
+    public func innerCellForRow(atInner innerIndexPath: IndexPath) -> UITableViewCell? {
+        return innerTableView.cellForRow(at: innerIndexPath)
+    }
+
+    public func heightsShouldChange() {
+        setHeightConstraint()
+    }
 }
 
 
@@ -112,11 +126,11 @@ extension TableViewCellWithTableView {
     //Required
     func cell(_ cell: TableViewCellWithTableView, numberOfRowsInSection section: Int) -> Int
     func cell(_ cell: TableViewCellWithTableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    func reuseIdentifierForInnerTableView(for cell: TableViewCellWithTableView) -> String
-    func cellClassForInnerTableView(for cell: TableViewCellWithTableView) -> AnyClass
+    func reuseIdentifierForInnerTableView(for cell: TableViewCellWithTableView) -> [String]
+    func cellClassForInnerTableView(for cell: TableViewCellWithTableView) -> [AnyClass]
     
     func heightForInnerCell(for cell: TableViewCellWithTableView) -> CGFloat
-
+    
     //Optional Other
     @objc optional func cell(_ cell: TableViewCellWithTableView, commit editingSyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     @objc optional func cell(_ cell: TableViewCellWithTableView, canEditRowAt indexPath: IndexPath) -> Bool
@@ -144,9 +158,11 @@ extension SubTableViewDelegateAndDataSource: UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let dataSource = dataSource else { fatalError("Requires a data source.") }
-        let cellClass = dataSource.cellClassForInnerTableView(for: outerCell)
-        let identifier = dataSource.reuseIdentifierForInnerTableView(for: outerCell)
-        outerCell.register(cellClass, forCellReuseIdentifier: identifier)
+        let cellClasses = dataSource.cellClassForInnerTableView(for: outerCell)
+        let identifiers = dataSource.reuseIdentifierForInnerTableView(for: outerCell)
+        for (cellClass,identifier) in zip(cellClasses, identifiers) {
+            outerCell.register(cellClass, forCellReuseIdentifier: identifier)
+        }
         return dataSource.cell(outerCell, numberOfRowsInSection: section)
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
