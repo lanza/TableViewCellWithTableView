@@ -10,11 +10,17 @@ open class TableViewCellWithTableView: UITableViewCell {
     public var dataSource: TableViewCellWithTableViewDataSource! {
         didSet {
             subTableViewDelegateAndDataSource.dataSource = dataSource
-            setConstraints()
+            setViewsAndConstraints()
         }
     }
     
-    let innerTableView = InnerTableView()
+    public var topContentView = UIView() {
+        didSet {
+            topContentViewHeightConstraint.constant = topContentView.frame.height
+        }
+    }
+    public var topContentViewHeight: CGFloat { return 0 }
+    let innerTableView = UITableView()
     
     public var outerIndexPath: IndexPath!
     let subTableViewDelegateAndDataSource = SubTableViewDelegateAndDataSource()
@@ -27,28 +33,39 @@ open class TableViewCellWithTableView: UITableViewCell {
         innerTableView.dataSource = subTableViewDelegateAndDataSource
     }
     
-    var heightConstraint: NSLayoutConstraint!
+    var innerTableHeightConstraint: NSLayoutConstraint!
+    public var topContentViewHeightConstraint: NSLayoutConstraint!
     
-    func setConstraints() {
+    func setViewsAndConstraints() {
         
         innerTableView.translatesAutoresizingMaskIntoConstraints = false
+        topContentView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(innerTableView)
+        contentView.addSubview(topContentView)
         
         var constraints = [NSLayoutConstraint]()
         
-        constraints.append(innerTableView.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor))
+        constraints.append(topContentView.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor))
+        constraints.append(topContentView.leftAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leftAnchor))
+        constraints.append(topContentView.rightAnchor.constraint(equalTo: contentView.layoutMarginsGuide.rightAnchor))
+        constraints.append(innerTableView.topAnchor.constraint(equalTo: topContentView.bottomAnchor))
         constraints.append(innerTableView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor))
         constraints.append(innerTableView.leftAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leftAnchor))
         constraints.append(innerTableView.rightAnchor.constraint(equalTo: contentView.layoutMarginsGuide.rightAnchor))
         
-        heightConstraint = innerTableView.heightAnchor.constraint(equalToConstant: 1)
+        topContentViewHeightConstraint = topContentView.heightAnchor.constraint(equalToConstant: 1)
+        innerTableHeightConstraint = innerTableView.heightAnchor.constraint(equalToConstant: 1)
         
-        constraints.append(heightConstraint)
-        setHeightConstraint()
+        constraints.append(topContentViewHeightConstraint)
+        constraints.append(innerTableHeightConstraint)
+        constraints.forEach { constraint in
+            constraint.priority = 999
+        }
+        setHeightConstraint(false)
         NSLayoutConstraint.activate(constraints)
     }
     
-    func setHeightConstraint() {
+    func setHeightConstraint(_ animated: Bool) {
         guard let dataSource = dataSource else { return }
         
         let headerHeight = innerTableView.tableHeaderView?.frame.height ?? 0
@@ -60,8 +77,20 @@ open class TableViewCellWithTableView: UITableViewCell {
         }
         let totalHeightForCells = CGFloat(cellCount) * cellHeight + headerHeight + footerHeight
         
-        //        innerTableView.beginUpdates()
-        heightConstraint.constant = totalHeightForCells
+        innerTableHeightConstraint.constant = totalHeightForCells
+        
+        let frameResizing: () -> () = {
+            let frame = self.innerTableView.frame
+            self.innerTableView.frame = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: totalHeightForCells)
+        }
+        
+        if animated {
+            UIView.animate(withDuration: 0.3) {
+                frameResizing()
+            }
+        } else {
+            frameResizing()
+        }
         innerTableView.endUpdates()
     }
     
@@ -72,13 +101,13 @@ open class TableViewCellWithTableView: UITableViewCell {
 
 //MARK: - InnerTableView interceptions
 extension TableViewCellWithTableView {
-    public func deleteRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
-        innerTableView.deleteRows(at: indexPaths, with: animation)
-        setHeightConstraint()
+    public func deleteRows(atInner innerIndexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
+        innerTableView.deleteRows(at: innerIndexPaths, with: animation)
+        setHeightConstraint(true)
     }
-    public func insertRows(at indexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
-        innerTableView.insertRows(at: indexPaths, with: animation)
-        setHeightConstraint()
+    public func insertRows(atInner innerIndexPaths: [IndexPath], with animation: UITableViewRowAnimation) {
+        innerTableView.insertRows(at: innerIndexPaths, with: animation)
+        setHeightConstraint(true)
     }
     public var innerTableHeaderView: UIView? {
         get {
@@ -86,7 +115,7 @@ extension TableViewCellWithTableView {
         }
         set {
             innerTableView.tableHeaderView = newValue
-            setHeightConstraint()
+            setHeightConstraint(false)
         }
     }
     public var innerTableFooterView: UIView? {
@@ -95,18 +124,18 @@ extension TableViewCellWithTableView {
         }
         set {
             innerTableView.tableFooterView = newValue
-            setHeightConstraint()
+            setHeightConstraint(false)
         }
     }
     public func register(_ cellClass: AnyClass?, forCellReuseIdentifier identifier: String) {
         innerTableView.register(cellClass, forCellReuseIdentifier: identifier)
     }
     
-    public func dequeueReusableCell(withIdentifier identifier: String, for indexPath: IndexPath) -> UITableViewCell {
-        return innerTableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+    public func dequeueReusableCell(withIdentifier identifier: String, forInner innerIndexPath: IndexPath) -> UITableViewCell {
+        return innerTableView.dequeueReusableCell(withIdentifier: identifier, for: innerIndexPath)
     }
-    public func deselectRow(at indexPath: IndexPath, animated: Bool) {
-        innerTableView.deselectRow(at: indexPath, animated: animated)
+    public func deselectRow(at innerIndexPath: IndexPath, animated: Bool) {
+        innerTableView.deselectRow(at: innerIndexPath, animated: animated)
     }
     public func innerIndexPath(forInner innerCell: UITableViewCell) -> IndexPath? {
         return innerTableView.indexPath(for: innerCell)
@@ -114,9 +143,10 @@ extension TableViewCellWithTableView {
     public func innerCellForRow(atInner innerIndexPath: IndexPath) -> UITableViewCell? {
         return innerTableView.cellForRow(at: innerIndexPath)
     }
-
-    public func heightsShouldChange() {
-        setHeightConstraint()
+    
+    var innerTableViewIsUserInteractionEnabled: Bool {
+        get { return innerTableView.isUserInteractionEnabled }
+        set { innerTableView.isUserInteractionEnabled = newValue }
     }
 }
 
@@ -124,12 +154,12 @@ extension TableViewCellWithTableView {
 //MARK: TableViewCellWithTableView Delegate and DataSource
 @objc public protocol TableViewCellWithTableViewDataSource: class {
     //Required
-    func cell(_ cell: TableViewCellWithTableView, numberOfRowsInSection section: Int) -> Int
-    func cell(_ cell: TableViewCellWithTableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    func reuseIdentifierForInnerTableView(for cell: TableViewCellWithTableView) -> [String]
-    func cellClassForInnerTableView(for cell: TableViewCellWithTableView) -> [AnyClass]
+    func numberOfRows(in section: Int, for outerCell: TableViewCellWithTableView) -> Int
+    func innerCellForRow(atInner innerIndexPath: IndexPath, forOuter outerCell: TableViewCellWithTableView) -> UITableViewCell
     
-    func heightForInnerCell(for cell: TableViewCellWithTableView) -> CGFloat
+    func reuseIdentifiersForInnerTableView(forOuter outerCell: TableViewCellWithTableView) -> [String]
+    func innerCellClassesForInnerTableView(forOuter outerCell: TableViewCellWithTableView) -> [AnyClass]
+    func heightForInnerCell(forOuter outerCell: TableViewCellWithTableView) -> CGFloat
     
     //Optional Other
     @objc optional func cell(_ cell: TableViewCellWithTableView, commit editingSyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
@@ -140,7 +170,6 @@ extension TableViewCellWithTableView {
 @objc public protocol TableViewCellWithTableViewDelegate {
     @objc optional func cell(_ cell: TableViewCellWithTableView, willSelectRowAtInner innerIndexPath: IndexPath) -> IndexPath?
     @objc optional func cell(_ cell: TableViewCellWithTableView, didSelectRowAtInner innerIndexPath: IndexPath)
-    @objc optional func cell(_ cell: TableViewCellWithTableView, didTap button: UIButton)
 }
 
 
@@ -158,6 +187,7 @@ extension SubTableViewDelegateAndDataSource: UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let dataSource = dataSource else { fatalError("Requires a data source.") }
+        guard outerCell.outerIndexPath != nil else { return 0 }
         let cellClasses = dataSource.cellClassForInnerTableView(for: outerCell)
         let identifiers = dataSource.reuseIdentifierForInnerTableView(for: outerCell)
         for (cellClass,identifier) in zip(cellClasses, identifiers) {
@@ -178,7 +208,7 @@ extension SubTableViewDelegateAndDataSource: UITableViewDataSource {
 }
 extension SubTableViewDelegateAndDataSource: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        return (delegate?.cell?(outerCell, willSelectRowAtInner: indexPath) ?? indexPath)
+        return delegate?.cell?(outerCell, willSelectRowAtInner: indexPath)
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         delegate?.cell?(outerCell, didSelectRowAtInner: indexPath)
